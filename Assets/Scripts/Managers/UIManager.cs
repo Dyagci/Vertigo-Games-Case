@@ -17,6 +17,7 @@ namespace WheelOfFortune.UI
         [SerializeField] private ButtonBase restartButton;
 
         [Header("Panels")]
+        [SerializeField] private GameObject mainPanel;
         [SerializeField] private GameObject gameOverPanel;
 
         private void Start()
@@ -30,11 +31,12 @@ namespace WheelOfFortune.UI
             GameManager.Instance.OnZoneChanged += UpdateZoneUI;
             GameManager.Instance.OnRewardsUpdated += UpdateRewardsUI;
             GameManager.Instance.OnGameOver += ShowGameOver;
-            GameManager.Instance.OnGameWin += ShowCollect;
+            GameManager.Instance.OnGameWin += HandleWin;
             GameManager.Instance.OnSpinStarted += HandleSpinStarted;
             GameManager.Instance.OnSpinEnded += HandleSpinEnded;
 
             // Initialize UI
+            if (mainPanel != null) mainPanel.SetActive(true);
             if (gameOverPanel != null) gameOverPanel.SetActive(false);
 
             UpdateZoneUI(GameManager.Instance.CurrentZone);
@@ -53,7 +55,7 @@ namespace WheelOfFortune.UI
                 GameManager.Instance.OnZoneChanged -= UpdateZoneUI;
                 GameManager.Instance.OnRewardsUpdated -= UpdateRewardsUI;
                 GameManager.Instance.OnGameOver -= ShowGameOver;
-                GameManager.Instance.OnGameWin -= ShowCollect;
+                GameManager.Instance.OnGameWin -= HandleWin;
                 GameManager.Instance.OnSpinStarted -= HandleSpinStarted;
                 GameManager.Instance.OnSpinEnded -= HandleSpinEnded;
             }
@@ -72,6 +74,10 @@ namespace WheelOfFortune.UI
         private void HandleRestart()
         {
             if (gameOverPanel != null) gameOverPanel.SetActive(false);
+            if (mainPanel != null) mainPanel.SetActive(true);
+
+            if (spinButton != null) spinButton.SetInteractable(true);
+
             GameManager.Instance.RestartGame();
             UpdateCollectButtonVisibility();
         }
@@ -102,7 +108,6 @@ namespace WheelOfFortune.UI
             else
                 zoneTypeText.text = "BRONZE SPIN";
 
-            // Update colors
             zoneTypeText.color = config.textColor;
 
             if (rewardInfoText != null)
@@ -116,7 +121,8 @@ namespace WheelOfFortune.UI
 
         private void UpdateRewardsUI(int rewards)
         {
-            rewardsText.text = rewards.ToString();
+            if (rewardsText != null)
+                rewardsText.text = rewards.ToString();
         }
 
         private void UpdateCollectButtonVisibility()
@@ -129,10 +135,14 @@ namespace WheelOfFortune.UI
 
         private void ShowGameOver()
         {
+            if (mainPanel != null) mainPanel.SetActive(false);
             if (gameOverPanel != null) gameOverPanel.SetActive(true);
+
+            if (spinButton != null) spinButton.SetInteractable(false);
+            if (collectButton != null) collectButton.SetInteractable(false);
         }
 
-        private void ShowCollect()
+        private void HandleWin()
         {
             Debug.Log($"Player collected {GameManager.Instance.TotalRewards} rewards!");
             GameManager.Instance.RestartGame();
