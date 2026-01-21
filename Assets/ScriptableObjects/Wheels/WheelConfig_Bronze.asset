@@ -17,6 +17,8 @@ MonoBehaviour:
   indicator: {fileID: 21300000, guid: 25669694440dbd643ade1f59e026ffda, type: 3}
   minSpinDuration: 2
   maxSpinDuration: 4
+  rewardInfoText: Up To X2 Rewards
+  textColor: {r: 0.69803923, g: 0.42352945, b: 0.16470589, a: 1}
   slices:
   - rewardType: 0
     icon: {fileID: 21300000, guid: 47b61d42767a2cf42a815d8558991d1f, type: 3}

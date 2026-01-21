@@ -9,6 +9,7 @@ namespace WheelOfFortune.UI
         [Header("Texts")]
         [SerializeField] private TextMeshProUGUI rewardsText;
         [SerializeField] private TextMeshProUGUI zoneTypeText;
+        [SerializeField] private TextMeshProUGUI rewardInfoText;
 
         [Header("Buttons")]
         [SerializeField] private ButtonBase spinButton;
@@ -92,12 +93,23 @@ namespace WheelOfFortune.UI
 
         private void UpdateZoneUI(int zone)
         {
+            var config = GameManager.Instance.GetCurrentWheelConfig();
+
             if (GameManager.Instance.IsSuperZone())
                 zoneTypeText.text = "GOLDEN SPIN";
             else if (GameManager.Instance.IsSafeZone())
                 zoneTypeText.text = "SILVER SPIN";
             else
                 zoneTypeText.text = "BRONZE SPIN";
+
+            // Update colors
+            zoneTypeText.color = config.textColor;
+
+            if (rewardInfoText != null)
+            {
+                rewardInfoText.text = config.rewardInfoText;
+                rewardInfoText.color = config.textColor;
+            }
 
             UpdateCollectButtonVisibility();
         }

@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 using WheelOfFortune.Core;
 
 namespace WheelOfFortune.Managers
@@ -14,6 +15,7 @@ namespace WheelOfFortune.Managers
         public event Action OnGameWin;
         public event Action OnSpinStarted;
         public event Action OnSpinEnded;
+        public event Action<WheelSliceData> OnRewardCollected;
 
         [Header("Wheel Configs")]
         [SerializeField] private WheelConfiguration bronzeConfig;
@@ -25,9 +27,11 @@ namespace WheelOfFortune.Managers
 
         private int currentZone = 1;
         private int totalRewards = 0;
+        private List<WheelSliceData> collectedRewards = new List<WheelSliceData>();
 
         public int CurrentZone => currentZone;
         public int TotalRewards => totalRewards;
+        public List<WheelSliceData> CollectedRewards => collectedRewards;
 
         private void Awake()
         {
@@ -83,6 +87,8 @@ namespace WheelOfFortune.Managers
             }
             else
             {
+                collectedRewards.Add(result);
+                OnRewardCollected?.Invoke(result);
                 AddReward(result.rewardAmount);
                 NextZone();
                 LoadCurrentZone();
@@ -107,6 +113,7 @@ namespace WheelOfFortune.Managers
         public void HitBomb()
         {
             totalRewards = 0;
+            collectedRewards.Clear();
             OnGameOver?.Invoke();
         }
 
@@ -125,6 +132,7 @@ namespace WheelOfFortune.Managers
         {
             currentZone = 1;
             totalRewards = 0;
+            collectedRewards.Clear();
             OnZoneChanged?.Invoke(currentZone);
             OnRewardsUpdated?.Invoke(totalRewards);
             LoadCurrentZone();

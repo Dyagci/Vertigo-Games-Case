@@ -1,9 +1,8 @@
-// WheelController.cs
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 using System;
-using WheelOfFortune.Managers;
+using TMPro;
 
 namespace WheelOfFortune.Core
 {
@@ -20,7 +19,7 @@ namespace WheelOfFortune.Core
 
         [Header("Slice UI References")]
         [SerializeField] private Image[] sliceIcons;
-        [SerializeField] private TMPro.TextMeshProUGUI[] sliceTexts;
+        [SerializeField] private TextMeshProUGUI[] sliceTexts;
 
         private WheelConfiguration currentConfig;
         private WheelSliceData[] currentSlices;
@@ -33,11 +32,12 @@ namespace WheelOfFortune.Core
             currentConfig = config;
             currentSlices = slices;
 
-            // Update wheel visuals
-            wheelBaseImage.sprite = config.wheelBase;
-            indicatorImage.sprite = config.indicator;
+            if (wheelBaseImage != null && config.wheelBase != null)
+                wheelBaseImage.sprite = config.wheelBase;
 
-            // Update slice visuals
+            if (indicatorImage != null && config.indicator != null)
+                indicatorImage.sprite = config.indicator;
+
             for (int i = 0; i < slices.Length && i < sliceIcons.Length; i++)
             {
                 sliceIcons[i].sprite = slices[i].icon;
@@ -52,25 +52,22 @@ namespace WheelOfFortune.Core
             isSpinning = true;
             OnSpinStarted?.Invoke();
 
-            // Pick random result
             int sliceCount = currentSlices.Length;
             int resultIndex = UnityEngine.Random.Range(0, sliceCount);
 
-            // Calculate target angle
             float sliceAngle = 360f / sliceCount;
-            float targetAngle = -(resultIndex * sliceAngle);
 
-            // Add extra full spins
+            // Reverse the index for clockwise rotation
+            int adjustedIndex = (sliceCount - resultIndex) % sliceCount;
+            float targetAngle = adjustedIndex * sliceAngle;
+
             float fullSpins = 360f * UnityEngine.Random.Range(3, 6);
-            float finalAngle = targetAngle - fullSpins;
+            float finalAngle = -(fullSpins + targetAngle);
 
-            // Get random duration
             float duration = currentConfig.GetRandomSpinDuration();
 
-            // Reset rotation before spinning
             wheelRoot.localRotation = Quaternion.identity;
 
-            // Animate
             wheelRoot.DORotate(new Vector3(0, 0, finalAngle), duration, RotateMode.FastBeyond360)
                 .SetEase(Ease.OutQuart)
                 .OnComplete(() =>
