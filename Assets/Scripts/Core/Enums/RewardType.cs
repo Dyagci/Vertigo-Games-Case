@@ -2,9 +2,13 @@ namespace WheelOfFortune.Core
 {
     public enum RewardType
     {
+        Bomb,
         Currency,
+        Chest,
         Weapon,
-        Equipment,
-        Consumable
+        WeaponPoints,
+        Consumable,
+        Throwable,
+        Cosmetics
     }
 }

@@ -1,175 +1,129 @@
+// GameManager.cs
 using UnityEngine;
+using System;
 using WheelOfFortune.Core;
-using WheelOfFortune.Data;
 
 namespace WheelOfFortune.Managers
 {
-    public class GameManager : Singleton<GameManager>
+    public class GameManager : MonoBehaviour
     {
-        private GameState currentState = GameState.Idle;
+        public static GameManager Instance { get; private set; }
 
-        public GameState CurrentState => currentState;
+        public event Action<int> OnZoneChanged;
+        public event Action<int> OnRewardsUpdated;
+        public event Action OnGameOver;
+        public event Action OnGameWin;
 
-        protected override void Awake()
+        [Header("Wheel Configs")]
+        [SerializeField] private WheelConfiguration bronzeConfig;
+        [SerializeField] private WheelConfiguration silverConfig;
+        [SerializeField] private WheelConfiguration goldenConfig;
+
+        [Header("References")]
+        [SerializeField] private WheelController wheelController;
+
+        private int currentZone = 1;
+        private int totalRewards = 0;
+
+        public int CurrentZone => currentZone;
+        public int TotalRewards => totalRewards;
+
+        private void Awake()
         {
-            base.Awake();
-            SubscribeToEvents();
+            if (Instance == null)
+                Instance = this;
+            else
+                Destroy(gameObject);
         }
 
         private void Start()
         {
-            SetState(GameState.Idle);
+            wheelController.OnSpinEnded += HandleSpinResult;
+            LoadCurrentZone();
         }
 
         private void OnDestroy()
         {
-            UnsubscribeFromEvents();
+            if (wheelController != null)
+                wheelController.OnSpinEnded -= HandleSpinResult;
         }
 
-        private void SubscribeToEvents()
+        public WheelConfiguration GetCurrentWheelConfig()
         {
-            GameEvents.OnSpinStarted += OnSpinStarted;
-            GameEvents.OnSpinEnded += OnSpinEnded;
-            GameEvents.OnBombHit += OnBombHit;
+            if (currentZone % 30 == 0) return goldenConfig;
+            if (currentZone % 5 == 0) return silverConfig;
+            return bronzeConfig;
         }
 
-        private void UnsubscribeFromEvents()
+        public bool IsSafeZone()
         {
-            GameEvents.OnSpinStarted -= OnSpinStarted;
-            GameEvents.OnSpinEnded -= OnSpinEnded;
-            GameEvents.OnBombHit -= OnBombHit;
+            return currentZone % 5 == 0;
         }
 
-        public void SetState(GameState newState)
+        public bool IsSuperZone()
         {
-            if (currentState == newState) return;
-
-            currentState = newState;
-            GameEvents.RaiseGameStateChanged(newState);
-
-            OnStateEnter(newState);
+            return currentZone % 30 == 0;
         }
 
-        private void OnStateEnter(GameState state)
+        private void LoadCurrentZone()
         {
-            switch (state)
+            var config = GetCurrentWheelConfig();
+            wheelController.SetupWheel(config, config.slices);
+            OnZoneChanged?.Invoke(currentZone);
+        }
+
+        private void HandleSpinResult(WheelSliceData result)
+        {
+            if (result.IsBomb)
             {
-                case GameState.Idle:
-                    HandleIdleState();
-                    break;
-                case GameState.Spinning:
-                    HandleSpinningState();
-                    break;
-                case GameState.ShowingResult:
-                    HandleShowingResultState();
-                    break;
-                case GameState.GameOver:
-                    HandleGameOverState();
-                    break;
-                case GameState.Collecting:
-                    HandleCollectingState();
-                    break;
-            }
-        }
-
-        private void HandleIdleState()
-        {
-            // Player can spin or leave (if in safe/super zone)
-        }
-
-        private void HandleSpinningState()
-        {
-            // Wheel is spinning, player cannot interact
-        }
-
-        private void HandleShowingResultState()
-        {
-            // Showing what player won
-        }
-
-        private void HandleGameOverState()
-        {
-            // Player hit bomb, show death panel
-        }
-
-        private void HandleCollectingState()
-        {
-            // Player chose to leave, show rewards summary
-        }
-
-        private void OnSpinStarted()
-        {
-            SetState(GameState.Spinning);
-        }
-
-        private void OnSpinEnded(IWheelSlice result)
-        {
-            if (result != null && result.IsBomb)
-            {
-                GameEvents.RaiseBombHit();
+                HitBomb();
             }
             else
             {
-                SetState(GameState.ShowingResult);
+                AddReward(result.rewardAmount);
+                NextZone();
+                LoadCurrentZone();
             }
         }
 
-        private void OnBombHit()
+        public void SpinWheel()
         {
-            SetState(GameState.GameOver);
-        }
-
-        public void RequestSpin()
-        {
-            if (currentState != GameState.Idle)
+            if (!wheelController.IsSpinning)
             {
-                Debug.LogWarning("Cannot spin: Game is not in Idle state");
-                return;
+                wheelController.Spin();
             }
-
-            GameEvents.RaiseSpinStarted();
         }
 
-        public void RequestCollectAndLeave()
+        public void AddReward(int amount)
         {
-            if (currentState != GameState.Idle)
-            {
-                Debug.LogWarning("Cannot collect: Game is not in Idle state");
-                return;
-            }
-
-            if (!ZoneManager.Instance.CanPlayerLeave())
-            {
-                Debug.LogWarning("Cannot leave: Not in a safe or super zone");
-                return;
-            }
-
-            SetState(GameState.Collecting);
+            totalRewards += amount;
+            OnRewardsUpdated?.Invoke(totalRewards);
         }
 
-        public void ProcessRewardAndContinue(WheelSliceData sliceData)
+        public void HitBomb()
         {
-            if (sliceData == null || sliceData.IsBomb) return;
+            totalRewards = 0;
+            OnGameOver?.Invoke();
+        }
 
-            RewardManager.Instance.AddReward(sliceData.Reward);
-            ZoneManager.Instance.AdvanceToNextZone();
-            SetState(GameState.Idle);
+        public void NextZone()
+        {
+            currentZone++;
+            OnZoneChanged?.Invoke(currentZone);
+        }
+
+        public void CollectAndLeave()
+        {
+            OnGameWin?.Invoke();
         }
 
         public void RestartGame()
         {
-            GameEvents.RaiseGameReset();
-            SetState(GameState.Idle);
-        }
-
-        public bool CanSpin()
-        {
-            return currentState == GameState.Idle;
-        }
-
-        public bool CanLeave()
-        {
-            return currentState == GameState.Idle && ZoneManager.Instance.CanPlayerLeave();
+            currentZone = 1;
+            totalRewards = 0;
+            OnZoneChanged?.Invoke(currentZone);
+            OnRewardsUpdated?.Invoke(totalRewards);
+            LoadCurrentZone();
         }
     }
 }

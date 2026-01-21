@@ -1,14 +1,15 @@
 using UnityEngine;
 
-namespace WheelOfFortune.Data
+namespace WheelOfFortune.Core
 {
     [System.Serializable]
     public class WheelSliceData
     {
-        [SerializeField] private RewardData reward;
-        [SerializeField] private bool isBomb;
-
-        public RewardData Reward => reward;
-        public bool IsBomb => isBomb;
+        public RewardType rewardType;
+        public Sprite icon;
+        public int rewardAmount;
+        
+        public bool IsBomb => rewardType == RewardType.Bomb;
+        public string MultiplierText => IsBomb ? "" : $"x{rewardAmount}";
     }
 }
