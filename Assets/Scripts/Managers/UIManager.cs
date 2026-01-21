@@ -1,4 +1,3 @@
-// UIManager.cs
 using UnityEngine;
 using TMPro;
 using WheelOfFortune.Managers;
@@ -18,7 +17,6 @@ namespace WheelOfFortune.UI
 
         [Header("Panels")]
         [SerializeField] private GameObject gameOverPanel;
-        [SerializeField] private GameObject collectPanel;
 
         private void Start()
         {
@@ -32,13 +30,15 @@ namespace WheelOfFortune.UI
             GameManager.Instance.OnRewardsUpdated += UpdateRewardsUI;
             GameManager.Instance.OnGameOver += ShowGameOver;
             GameManager.Instance.OnGameWin += ShowCollect;
+            GameManager.Instance.OnSpinStarted += HandleSpinStarted;
+            GameManager.Instance.OnSpinEnded += HandleSpinEnded;
 
             // Initialize UI
             if (gameOverPanel != null) gameOverPanel.SetActive(false);
-            if (collectPanel != null) collectPanel.SetActive(false);
 
             UpdateZoneUI(GameManager.Instance.CurrentZone);
             UpdateRewardsUI(GameManager.Instance.TotalRewards);
+            UpdateCollectButtonVisibility();
         }
 
         private void OnDestroy()
@@ -53,6 +53,8 @@ namespace WheelOfFortune.UI
                 GameManager.Instance.OnRewardsUpdated -= UpdateRewardsUI;
                 GameManager.Instance.OnGameOver -= ShowGameOver;
                 GameManager.Instance.OnGameWin -= ShowCollect;
+                GameManager.Instance.OnSpinStarted -= HandleSpinStarted;
+                GameManager.Instance.OnSpinEnded -= HandleSpinEnded;
             }
         }
 
@@ -69,8 +71,23 @@ namespace WheelOfFortune.UI
         private void HandleRestart()
         {
             if (gameOverPanel != null) gameOverPanel.SetActive(false);
-            if (collectPanel != null) collectPanel.SetActive(false);
             GameManager.Instance.RestartGame();
+            UpdateCollectButtonVisibility();
+        }
+
+        private void HandleSpinStarted()
+        {
+            if (collectButton != null)
+                collectButton.SetInteractable(false);
+            if (spinButton != null)
+                spinButton.SetInteractable(false);
+        }
+
+        private void HandleSpinEnded()
+        {
+            if (spinButton != null)
+                spinButton.SetInteractable(true);
+            UpdateCollectButtonVisibility();
         }
 
         private void UpdateZoneUI(int zone)
@@ -81,11 +98,21 @@ namespace WheelOfFortune.UI
                 zoneTypeText.text = "SILVER SPIN";
             else
                 zoneTypeText.text = "BRONZE SPIN";
+
+            UpdateCollectButtonVisibility();
         }
 
         private void UpdateRewardsUI(int rewards)
         {
             rewardsText.text = rewards.ToString();
+        }
+
+        private void UpdateCollectButtonVisibility()
+        {
+            if (collectButton == null) return;
+
+            bool canCollect = GameManager.Instance.IsSafeZone() || GameManager.Instance.IsSuperZone();
+            collectButton.SetInteractable(canCollect);
         }
 
         private void ShowGameOver()
@@ -95,7 +122,8 @@ namespace WheelOfFortune.UI
 
         private void ShowCollect()
         {
-            if (collectPanel != null) collectPanel.SetActive(true);
+            Debug.Log($"Player collected {GameManager.Instance.TotalRewards} rewards!");
+            GameManager.Instance.RestartGame();
         }
     }
 }

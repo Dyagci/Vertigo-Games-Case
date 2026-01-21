@@ -1,4 +1,3 @@
-// ButtonBase.cs
 using UnityEngine;
 using UnityEngine.UI;
 using System;
@@ -9,6 +8,11 @@ namespace WheelOfFortune.UI
     public class ButtonBase : MonoBehaviour
     {
         [SerializeField] private Button button;
+        [SerializeField] private Image buttonImage;
+
+        [Header("Sprites")]
+        [SerializeField] private Sprite activeSprite;
+        [SerializeField] private Sprite disabledSprite;
 
         public event Action OnClick;
 
@@ -16,6 +20,8 @@ namespace WheelOfFortune.UI
         {
             if (button == null)
                 button = GetComponent<Button>();
+            if (buttonImage == null)
+                buttonImage = GetComponent<Image>();
         }
 
         private void OnEnable()
@@ -31,6 +37,24 @@ namespace WheelOfFortune.UI
         private void HandleClick()
         {
             OnClick?.Invoke();
+        }
+
+        public void SetInteractable(bool interactable)
+        {
+            button.interactable = interactable;
+
+            // Only swap sprites if both are assigned
+            if (buttonImage != null)
+            {
+                if (interactable && activeSprite != null)
+                {
+                    buttonImage.sprite = activeSprite;
+                }
+                else if (!interactable && disabledSprite != null)
+                {
+                    buttonImage.sprite = disabledSprite;
+                }
+            }
         }
     }
 }

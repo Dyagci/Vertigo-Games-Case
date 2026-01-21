@@ -1,4 +1,3 @@
-// GameManager.cs
 using UnityEngine;
 using System;
 using WheelOfFortune.Core;
@@ -13,6 +12,8 @@ namespace WheelOfFortune.Managers
         public event Action<int> OnRewardsUpdated;
         public event Action OnGameOver;
         public event Action OnGameWin;
+        public event Action OnSpinStarted;
+        public event Action OnSpinEnded;
 
         [Header("Wheel Configs")]
         [SerializeField] private WheelConfiguration bronzeConfig;
@@ -74,6 +75,8 @@ namespace WheelOfFortune.Managers
 
         private void HandleSpinResult(WheelSliceData result)
         {
+            OnSpinEnded?.Invoke();
+
             if (result.IsBomb)
             {
                 HitBomb();
@@ -90,6 +93,7 @@ namespace WheelOfFortune.Managers
         {
             if (!wheelController.IsSpinning)
             {
+                OnSpinStarted?.Invoke();
                 wheelController.Spin();
             }
         }
