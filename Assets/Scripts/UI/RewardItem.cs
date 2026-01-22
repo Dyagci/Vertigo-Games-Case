@@ -23,11 +23,11 @@ namespace WheelOfFortune.UI
 
         public void Setup(WheelSliceData data)
         {
-            currentIcon = data.icon;
+            currentIcon = data.Icon;
             totalAmount = data.rewardAmount;
 
-            if (iconImage != null && data.icon != null)
-                iconImage.sprite = data.icon;
+            if (iconImage != null && data.Icon != null)
+                iconImage.sprite = data.Icon;
 
             UpdateText();
         }

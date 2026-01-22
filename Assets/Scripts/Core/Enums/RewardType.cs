@@ -9,6 +9,6 @@ namespace WheelOfFortune.Core
         WeaponPoints,
         Consumable,
         Throwable,
-        Cosmetics
+        Cosmetic
     }
 }

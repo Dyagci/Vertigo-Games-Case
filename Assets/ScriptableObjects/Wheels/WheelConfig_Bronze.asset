@@ -20,27 +20,19 @@ MonoBehaviour:
   rewardInfoText: Up To X2 Rewards
   textColor: {r: 0.69803923, g: 0.42352945, b: 0.16470589, a: 1}
   slices:
-  - rewardType: 0
-    icon: {fileID: 21300000, guid: 47b61d42767a2cf42a815d8558991d1f, type: 3}
-    rewardAmount: 0
-  - rewardType: 1
-    icon: {fileID: 21300000, guid: ef37143dc6e19dd47ac23cebc69f5e1d, type: 3}
+  - reward: {fileID: 11400000, guid: c88b4feaca9863b41a9ad8b5fe8660af, type: 2}
+    rewardAmount: 500
+  - reward: {fileID: 11400000, guid: c88b4feaca9863b41a9ad8b5fe8660af, type: 2}
     rewardAmount: 100
-  - rewardType: 2
-    icon: {fileID: 21300000, guid: 8211b34152343a34b98953811f41f51a, type: 3}
+  - reward: {fileID: 11400000, guid: b2e997a918d2cb245818479f2c9a86b1, type: 2}
     rewardAmount: 100
-  - rewardType: 3
-    icon: {fileID: 21300000, guid: 2aa74e2aa749ead4bace9ad5cc34605d, type: 3}
+  - reward: {fileID: 11400000, guid: 0860e9a9bc2de0b4899f1cf3f863b3b2, type: 2}
     rewardAmount: 100
-  - rewardType: 5
-    icon: {fileID: 21300000, guid: 1fce1455e07d43844a58023837d4f569, type: 3}
+  - reward: {fileID: 11400000, guid: a0b990ca8afb1e245a669a9dc2d383b3, type: 2}
     rewardAmount: 100
-  - rewardType: 6
-    icon: {fileID: 21300000, guid: 8b2a2e9029ef67343ae236465b0f3f1f, type: 3}
+  - reward: {fileID: 11400000, guid: 74cff9235f03f9b46bf3cb3cd6eb6467, type: 2}
     rewardAmount: 100
-  - rewardType: 7
-    icon: {fileID: 21300000, guid: fddb6b743e6e55242b33d054fab9babb, type: 3}
+  - reward: {fileID: 11400000, guid: 83fe9c20b9da22549a541cd4f2399baa, type: 2}
     rewardAmount: 100
-  - rewardType: 4
-    icon: {fileID: 21300000, guid: 401f60ea7efca764eb51d302ced92686, type: 3}
+  - reward: {fileID: 11400000, guid: ab5b7aaf5c599d444b50a3b75cef80aa, type: 2}
     rewardAmount: 100

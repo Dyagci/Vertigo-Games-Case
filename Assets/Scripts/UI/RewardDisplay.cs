@@ -31,10 +31,9 @@ namespace WheelOfFortune.UI
 
         private void AddRewardIcon(WheelSliceData reward)
         {
-            if (reward.icon == null) return;
+            if (reward.Icon == null) return;
 
-
-            if (rewardItems.TryGetValue(reward.icon, out RewardItem existingItem))
+            if (rewardItems.TryGetValue(reward.Icon, out RewardItem existingItem))
             {
                 existingItem.AddAmount(reward.rewardAmount);
             }
@@ -42,7 +41,7 @@ namespace WheelOfFortune.UI
             {
                 RewardItem item = Instantiate(rewardItemPrefab, rewardsContainer);
                 item.Setup(reward);
-                rewardItems.Add(reward.icon, item);
+                rewardItems.Add(reward.Icon, item);
             }
         }
 

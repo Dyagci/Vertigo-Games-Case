@@ -40,7 +40,7 @@ namespace WheelOfFortune.Core
 
             for (int i = 0; i < slices.Length && i < sliceIcons.Length; i++)
             {
-                sliceIcons[i].sprite = slices[i].icon;
+                sliceIcons[i].sprite = slices[i].Icon;
                 sliceTexts[i].text = slices[i].MultiplierText;
             }
         }
