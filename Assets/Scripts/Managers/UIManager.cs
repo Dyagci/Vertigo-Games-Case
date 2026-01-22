@@ -144,7 +144,6 @@ namespace WheelOfFortune.UI
 
         private void HandleWin()
         {
-            Debug.Log($"Player collected {GameManager.Instance.TotalRewards} rewards!");
             GameManager.Instance.RestartGame();
         }
     }
