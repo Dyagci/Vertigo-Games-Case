@@ -8,7 +8,6 @@ namespace WheelOfFortune.Core
         public string rewardID;
         public Sprite icon;
         
-        // Her alt sınıf bu tipi kendi içinde belirleyecek (hardcoded)
         public abstract RewardType Type { get; }
     }
 }

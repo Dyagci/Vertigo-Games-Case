@@ -2195,6 +2195,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f40801cdf96d1149949f584d5865baf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  startZone: 1
+  safeZoneInterval: 5
+  superZoneInterval: 30
   bronzeConfig: {fileID: 11400000, guid: 18dad1d186dc86241a2aab3fdcc690c3, type: 2}
   silverConfig: {fileID: 11400000, guid: a446537dcb02533469027922431f367b, type: 2}
   goldenConfig: {fileID: 11400000, guid: 9a29b0cc8802dfc4b8de8afe9d6fb67b, type: 2}
@@ -2964,8 +2967,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 31}
-  m_SizeDelta: {x: 390, y: 455}
+  m_AnchoredPosition: {x: 0, y: 31.52}
+  m_SizeDelta: {x: 400, y: 410.6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1446735579
 MonoBehaviour:

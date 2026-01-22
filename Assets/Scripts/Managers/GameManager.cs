@@ -17,6 +17,11 @@ namespace WheelOfFortune.Managers
         public event Action OnSpinEnded;
         public event Action<WheelSliceData> OnRewardCollected;
 
+        [Header("Zone Settings")]
+        [SerializeField] private int startZone = 1;
+        [SerializeField] private int safeZoneInterval = 5;
+        [SerializeField] private int superZoneInterval = 30;
+
         [Header("Wheel Configs")]
         [SerializeField] private WheelConfiguration bronzeConfig;
         [SerializeField] private WheelConfiguration silverConfig;
@@ -25,7 +30,7 @@ namespace WheelOfFortune.Managers
         [Header("References")]
         [SerializeField] private WheelController wheelController;
 
-        private int currentZone = 1;
+        private int currentZone;
         private int totalRewards = 0;
         private List<WheelSliceData> collectedRewards = new List<WheelSliceData>();
 
@@ -43,6 +48,7 @@ namespace WheelOfFortune.Managers
 
         private void Start()
         {
+            currentZone = startZone;
             wheelController.OnSpinEnded += HandleSpinResult;
             LoadCurrentZone();
         }
@@ -55,25 +61,26 @@ namespace WheelOfFortune.Managers
 
         public WheelConfiguration GetCurrentWheelConfig()
         {
-            if (currentZone % 30 == 0) return goldenConfig;
-            if (currentZone % 5 == 0) return silverConfig;
+            if (IsSuperZone()) return goldenConfig;
+            if (IsSafeZone()) return silverConfig;
             return bronzeConfig;
         }
 
         public bool IsSafeZone()
         {
-            return currentZone % 5 == 0;
+            return currentZone % safeZoneInterval == 0 && !IsSuperZone();
         }
 
         public bool IsSuperZone()
         {
-            return currentZone % 30 == 0;
+            return currentZone % superZoneInterval == 0;
         }
 
         private void LoadCurrentZone()
         {
             var config = GetCurrentWheelConfig();
-            wheelController.SetupWheel(config, config.slices);
+            var scaledSlices = config.GetScaledSlices(currentZone);
+            wheelController.SetupWheel(config, scaledSlices);
             OnZoneChanged?.Invoke(currentZone);
         }
 
@@ -136,7 +143,7 @@ namespace WheelOfFortune.Managers
 
         public void RestartGame()
         {
-            currentZone = 1;
+            currentZone = startZone;
             totalRewards = 0;
             collectedRewards.Clear();
             OnZoneChanged?.Invoke(currentZone);

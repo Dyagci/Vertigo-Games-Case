@@ -57,7 +57,6 @@ namespace WheelOfFortune.Core
 
             float sliceAngle = 360f / sliceCount;
 
-            // Reverse the index for clockwise rotation
             int adjustedIndex = (sliceCount - resultIndex) % sliceCount;
             float targetAngle = adjustedIndex * sliceAngle;
 

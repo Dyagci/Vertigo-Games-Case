@@ -11,11 +11,9 @@ namespace WheelOfFortune.Managers
 
         public event Action OnInventoryUpdated;
 
-        // Visible in Editor
         [Header("Collected Rewards (Read Only)")]
         [SerializeField] private List<InventoryEntry> inventoryDisplay = new List<InventoryEntry>();
 
-        // Key: RewardData SO, Value: total collected amount
         private Dictionary<RewardData, int> inventory = new Dictionary<RewardData, int>();
 
         public IReadOnlyDictionary<RewardData, int> Inventory => inventory;
