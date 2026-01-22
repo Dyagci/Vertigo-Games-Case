@@ -125,6 +125,12 @@ namespace WheelOfFortune.Managers
 
         public void CollectAndLeave()
         {
+            // Transfer session rewards to permanent inventory
+            if (InventoryManager.Instance != null)
+            {
+                InventoryManager.Instance.AddRewardsFromSession(collectedRewards);
+            }
+
             OnGameWin?.Invoke();
         }
 

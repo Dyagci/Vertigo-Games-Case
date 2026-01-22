@@ -22,7 +22,7 @@ MonoBehaviour:
   slices:
   - reward: {fileID: 11400000, guid: 9b9c7e0d2ec95054aafc62b584b7a49f, type: 2}
     rewardAmount: 300
-  - reward: {fileID: 0}
+  - reward: {fileID: 11400000, guid: ae38e3be238fa614189484b0823243d6, type: 2}
     rewardAmount: 300
   - reward: {fileID: 11400000, guid: 0676dcbee43669b4e804aa8738fcf341, type: 2}
     rewardAmount: 300
